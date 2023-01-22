@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-16"?>
+<QueryList>
+  <!--ATT&CK Data Source - user account-->
+  <Query Id="0" Path="Security">
+    <!--ATT&CK Data Component - user account modification-->
+    <!--4725 - A user account was disabled.-->
+    <!--4722 - A user account was enabled.-->
+    <!--4717 - System security access was granted to an account.-->
+    <!--4740 - A user account was locked out.-->
+    <!--4738 - A user account was changed.-->
+    <!--4781 - The name of an account was changed.-->
+    <!--4767 - A user account was unlocked.-->
+    <!--4718 - System security access was removed from an account.-->
+    <Select Path="Security">*[System[(EventID=4725 or EventID=4722 or EventID=4717 or EventID=4740 or EventID=4738 or EventID=4781 or EventID=4767 or EventID=4718)]]</Select>
+  </Query>
+  <Query Id="1" Path="Security">
+    <!--ATT&CK Data Component - user account authentication-->
+    <!--4624 - An account was successfully logged on.-->
+    <!--4625 - An account failed to log on.-->
+    <!--4648 - A logon was attempted using explicit credentials.-->
+    <Select Path="Security">*[System[(EventID=4624 or EventID=4625 or EventID=4648)]]</Select>
+  </Query>
+  <Query Id="2" Path="Security">
+    <!--ATT&CK Data Component - user account deletion-->
+    <!--4726 - A user account was deleted.-->
+    <Select Path="Security">*[System[(EventID=4726)]]</Select>
+  </Query>
+  <Query Id="3" Path="Security">
+    <!--ATT&CK Data Component - user account creation-->
+    <!--4720 - A user account was created.-->
+    <Select Path="Security">*[System[(EventID=4720)]]</Select>
+  </Query>
+</QueryList>
