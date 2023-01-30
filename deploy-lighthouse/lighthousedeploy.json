@@ -7,44 +7,56 @@
    "metadata": {
     "description": "Specify a unique name for your offer"
    },
-   "defaultValue": "Lighthouse-Cloudguard-SOC"
+   "defaultValue": "MDR- SOC"
   },
   "mspOfferDescription": {
    "type": "string",
    "metadata": {
     "description": "Name of the Managed Service Provider offering"
    },
-   "defaultValue": "Azure Lighthouse definition from the Cloudguard AI tenant for providing agreed SOC related services"
+   "defaultValue": "Managed SOC Services"
   },
-  "managedByTenantId": {
+  "rgName": {
    "type": "string",
-   "metadata": {
-    "description": "Specify the tenant id of the Managed Service Provider"
-   },
-   "defaultValue": "437026fb-9437-4952-bc67-cb19cd2a8612"
-  },
-  "authorizations": {
-   "type": "array",
-   "metadata": {
-    "description": "Specify an array of objects, containing tuples of Azure Active Directory principalId, a Azure roleDefinitionId, and an optional principalIdDisplayName. The roleDefinition specified is granted to the principalId in the provider's Active Directory and the principalIdDisplayName is visible to customers."
-   },
-   "defaultValue": [
-    {
-      "principalId": "dc785cee-f3f2-43dd-80f4-6441b2257ccc",
-      "roleDefinitionId": "b24988ac-6180-42a0-ab88-20f7382dd24c",
-      "principalIdDisplayName": "CloudGuard Lighthouse Group"
-    },
-    {
-      "principalId": "dc785cee-f3f2-43dd-80f4-6441b2257ccc",
-      "roleDefinitionId": "434105ed-43f6-45c7-a02f-909b2ba83430",
-      "principalIdDisplayName": "CloudGuard Lighthouse Group"
-    }
-  ]
+   "defaultValue": "CustomerRG"
   }
  },
  "variables": {
   "mspRegistrationName": "[guid(parameters('mspOfferName'))]",
-  "mspAssignmentName": "[guid(parameters('mspOfferName'))]"
+  "mspAssignmentName": "[guid(parameters('mspOfferName'))]",
+  "managedByTenantId": "434e2651-2d53-46f1-9f50-b5db880449d7",
+  "authorizations": [
+   {
+    "principalId": "7457ea3d-973b-4614-ae4d-3238304ad55f",
+    "roleDefinitionId": "51d6186e-6489-4900-b93f-92e23144cca5",
+    "principalIdDisplayName": "MANNAI-SOC Analysts"
+   },
+   {
+    "principalId": "7457ea3d-973b-4614-ae4d-3238304ad55f",
+    "roleDefinitionId": "8d289c81-5878-46d4-8554-54e1e3d8b5cb",
+    "principalIdDisplayName": "MANNAI-SOC Analysts"
+   },
+   {
+    "principalId": "7457ea3d-973b-4614-ae4d-3238304ad55f",
+    "roleDefinitionId": "73c42c96-874c-492b-b04d-ab87d138a893",
+    "principalIdDisplayName": "MANNAI-SOC Analysts"
+   },
+   {
+    "principalId": "7457ea3d-973b-4614-ae4d-3238304ad55f",
+    "roleDefinitionId": "3e150937-b8fe-4cfb-8069-0eaf05ecd056",
+    "principalIdDisplayName": "MANNAI-SOC Analysts"
+   },
+   {
+    "principalId": "84e1015b-7c91-47af-bd42-8ec322118f30",
+    "roleDefinitionId": "3e150937-b8fe-4cfb-8069-0eaf05ecd056",
+    "principalIdDisplayName": "MANNAI-SOC Engineers"
+   },
+   {
+    "principalId": "84e1015b-7c91-47af-bd42-8ec322118f30",
+    "roleDefinitionId": "ab8e14d6-4a74-4a29-9ba8-549422addade",
+    "principalIdDisplayName": "MANNAI-SOC Engineers"
+   }
+  ]
  },
  "resources": [
   {
@@ -54,19 +66,35 @@
    "properties": {
     "registrationDefinitionName": "[parameters('mspOfferName')]",
     "description": "[parameters('mspOfferDescription')]",
-    "managedByTenantId": "[parameters('managedByTenantId')]",
-    "authorizations": "[parameters('authorizations')]"
+    "managedByTenantId": "[variables('managedByTenantId')]",
+    "authorizations": "[variables('authorizations')]"
    }
   },
   {
-   "type": "Microsoft.ManagedServices/registrationAssignments",
-   "apiVersion": "2020-02-01-preview",
-   "name": "[variables('mspAssignmentName')]",
+   "type": "Microsoft.Resources/deployments",
+   "apiVersion": "2018-05-01",
+   "name": "rgAssignment",
+   "resourceGroup": "[parameters('rgName')]",
    "dependsOn": [
     "[resourceId('Microsoft.ManagedServices/registrationDefinitions/', variables('mspRegistrationName'))]"
    ],
    "properties": {
-    "registrationDefinitionId": "[resourceId('Microsoft.ManagedServices/registrationDefinitions/', variables('mspRegistrationName'))]"
+    "mode": "Incremental",
+    "template": {
+     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+     "contentVersion": "1.0.0.0",
+     "parameters": {},
+     "resources": [
+      {
+       "type": "Microsoft.ManagedServices/registrationAssignments",
+       "apiVersion": "2020-02-01-preview",
+       "name": "[variables('mspAssignmentName')]",
+       "properties": {
+        "registrationDefinitionId": "[resourceId('Microsoft.ManagedServices/registrationDefinitions/', variables('mspRegistrationName'))]"
+       }
+      }
+     ]
+    }
    }
   }
  ],
@@ -77,7 +105,7 @@
   },
   "authorizations": {
    "type": "array",
-   "value": "[parameters('authorizations')]"
+   "value": "[variables('authorizations')]"
   }
  }
 }
