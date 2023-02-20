@@ -1,4 +1,4 @@
-# Mannai One-Click deploy for Sentinel
+# Mannai One-Click deploy for Microsoft Sentinel
 
 <img src="resources/images/MISP.png" alt="Mannai One-Click deploy for Sentinel" width="800"/>
 
